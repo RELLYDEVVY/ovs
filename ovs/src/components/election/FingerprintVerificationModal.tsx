@@ -78,9 +78,10 @@ const FingerprintVerificationModal = ({ open, onOpenChange, onSuccess }: Fingerp
           ],
           timeout: 60000,
           authenticatorSelection: {
-            authenticatorAttachment: 'platform' as const, // Use platform authenticator (like fingerprint sensor)
-            userVerification: 'required' as const, // Require biometric verification
-            requireResidentKey: true // Ensure the key is discoverable
+            authenticatorAttachment: 'platform' as const,
+            userVerification: 'required' as const,
+            residentKey: 'discouraged' as const, // Discourage passkey-like behavior
+            requireResidentKey: false // For non-discoverable credential
           },
           attestation: 'none' as const
         };
