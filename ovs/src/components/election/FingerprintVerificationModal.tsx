@@ -5,7 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { Fingerprint, Check, X, AlertCircle } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { updateUserFingerprintStatus } from "../../services/userService";
-import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
+import { startRegistration } from '@simplewebauthn/browser';
 
 interface FingerprintVerificationModalProps {
   open: boolean;
@@ -87,26 +87,12 @@ const FingerprintVerificationModal = ({ open, onOpenChange, onSuccess }: Fingerp
         };
 
         // Register the credential first (this will prompt for fingerprint)
-        await startRegistration({ optionsJSON: regOptions });
+        const registrationResult = await startRegistration({ optionsJSON: regOptions });
         
-        // Now authenticate with the newly created credential
-        // Prepare the options in the format expected by startAuthentication
-        const authOptions = {
-          challenge: challengeBase64,
-          timeout: 60000,
-          rpId: window.location.hostname,
-          userVerification: 'required' as const,
-          allowCredentials: [] // Empty array to allow any credential
-        };
-
-        // This will trigger the browser's fingerprint/biometric authentication UI
-        const authResult = await startAuthentication({ optionsJSON: authOptions });
+        // If startRegistration is successful, consider it verified for this modal's purpose.
+        console.log('Fingerprint registration successful:', registrationResult);
         
-        // In a real app, you would verify this response with your server
-        // For this demo, if we get here without an error, we consider it successful
-        console.log('Authentication successful:', authResult);
-        
-        // Only call backend if fingerprint verification was successful
+        // Only call backend if fingerprint registration was successful
         await updateUserFingerprintStatus(userId, true);
 
         // Update local auth store
@@ -125,7 +111,7 @@ const FingerprintVerificationModal = ({ open, onOpenChange, onSuccess }: Fingerp
         
         setTimeout(() => {
           onOpenChange(false);
-          if (onSuccess) onSuccess(JSON.stringify(authResult));
+          if (onSuccess) onSuccess(JSON.stringify(registrationResult));
         }, 1000);
       } catch (authError) {
         console.error('WebAuthn authentication error:', authError);
