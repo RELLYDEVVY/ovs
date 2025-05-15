@@ -49,8 +49,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-muted/40">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-muted/40 p-4">
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
           <CardDescription className="text-center">
@@ -87,17 +87,12 @@ const LoginPage = () => {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex-col space-y-2">
-          <div className="text-sm text-muted-foreground text-center">
+        <CardFooter>
+          <div className="text-sm text-muted-foreground text-center w-full">
             <span>Don't have an account? </span>
             <Link to="/register" className="text-primary hover:underline">
               Sign up
             </Link>
-          </div>
-          <div className="text-xs text-muted-foreground text-center">
-            <p>Demo credentials:</p>
-            <p>Admin: admin@example.com / admin123</p>
-            <p>User: user@example.com / user123</p>
           </div>
         </CardFooter>
       </Card>

@@ -34,8 +34,8 @@ const Header = () => {
   return (
     <header className="bg-background sticky top-0 z-10 w-full border-b shadow-md">
       <div className="w-full py-3 px-4 flex justify-between items-center max-w-6xl mx-auto">
-        <Link to="/elections" className="text-xl font-bold text-blue-600 dark:text-blue-400">
-          Election Platform
+        <Link to="/elections" className="flex items-center">
+          <img src="/images/logo.svg" alt="OVS Project Logo" className="h-10" />
         </Link>
 
         {/* Desktop Navigation */}
