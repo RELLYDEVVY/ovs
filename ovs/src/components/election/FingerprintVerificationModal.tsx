@@ -5,7 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import { Fingerprint, Check, X, AlertCircle } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { updateUserFingerprintStatus } from "../../services/userService";
-import { startAuthentication } from '@simplewebauthn/browser';
+import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
 
 interface FingerprintVerificationModalProps {
   open: boolean;
@@ -57,17 +57,47 @@ const FingerprintVerificationModal = ({ open, onOpenChange, onSuccess }: Fingerp
       // Convert challenge to base64 string as required by the API
       const challengeBase64 = btoa(String.fromCharCode(...challengeArray));
       
-      // Prepare the options in the format expected by startAuthentication
-      // The correct format for startAuthentication is to pass the options wrapped in an optionsJSON property
-      const authOptions = {
-        challenge: challengeBase64,
-        timeout: 60000,
-        rpId: window.location.hostname,
-        userVerification: 'required' as const,
-        allowCredentials: [] // Empty array to allow any credential
-      };
-
+      // First, we need to create a credential (register) if one doesn't exist
+      // This will trigger the fingerprint sensor on the device
       try {
+        // Create registration options
+        const regOptions = {
+          challenge: challengeBase64,
+          rp: {
+            name: 'OVS Project',
+            id: window.location.hostname
+          },
+          user: {
+            id: btoa(userId), // Convert userId to base64
+            name: currentUser.email || `user-${userId}`,
+            displayName: currentUser.username || `User ${userId}`
+          },
+          pubKeyCredParams: [
+            { alg: -7, type: "public-key" as const }, // ES256
+            { alg: -257, type: "public-key" as const } // RS256
+          ],
+          timeout: 60000,
+          authenticatorSelection: {
+            authenticatorAttachment: 'platform' as const, // Use platform authenticator (like fingerprint sensor)
+            userVerification: 'required' as const, // Require biometric verification
+            requireResidentKey: false
+          },
+          attestation: 'none' as const
+        };
+
+        // Register the credential first (this will prompt for fingerprint)
+        await startRegistration({ optionsJSON: regOptions });
+        
+        // Now authenticate with the newly created credential
+        // Prepare the options in the format expected by startAuthentication
+        const authOptions = {
+          challenge: challengeBase64,
+          timeout: 60000,
+          rpId: window.location.hostname,
+          userVerification: 'required' as const,
+          allowCredentials: [] // Empty array to allow any credential
+        };
+
         // This will trigger the browser's fingerprint/biometric authentication UI
         const authResult = await startAuthentication({ optionsJSON: authOptions });
         
