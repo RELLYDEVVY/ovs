@@ -58,20 +58,18 @@ const FingerprintVerificationModal = ({ open, onOpenChange, onSuccess }: Fingerp
       const challengeBase64 = btoa(String.fromCharCode(...challengeArray));
       
       // Prepare the options in the format expected by startAuthentication
+      // The correct format for startAuthentication is to pass the options wrapped in an optionsJSON property
       const authOptions = {
-        optionsJSON: {
-          challenge: challengeBase64,
-          timeout: 60000,
-          rpId: window.location.hostname,
-          userVerification: 'required' as const,
-          // Remove extensions that are causing type errors
-          // In a production app, you would properly type these according to WebAuthn specs
-        }
+        challenge: challengeBase64,
+        timeout: 60000,
+        rpId: window.location.hostname,
+        userVerification: 'required' as const,
+        allowCredentials: [] // Empty array to allow any credential
       };
 
       try {
         // This will trigger the browser's fingerprint/biometric authentication UI
-        const authResult = await startAuthentication(authOptions);
+        const authResult = await startAuthentication({ optionsJSON: authOptions });
         
         // In a real app, you would verify this response with your server
         // For this demo, if we get here without an error, we consider it successful
