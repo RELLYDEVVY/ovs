@@ -1,25 +1,21 @@
 
 
 
-# Welcome to your Lovable project
+# Online Voting System (OVS)
 
-Jh5Q6T5N6nrboHPI
 
-mankingman821
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/7ea3e586-ccf6-4df9-ac73-1681ecf72878
+Online Voting System (OVS) is a secure platform for conducting elections electronically.
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use OVS**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7ea3e586-ccf6-4df9-ac73-1681ecf72878) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
+This is a secure online voting system with admin management capabilities.
 
 **Use your preferred IDE**
 
@@ -69,12 +65,12 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/7ea3e586-ccf6-4df9-ac73-1681ecf72878) and click on Share -> Publish.
+Deploy using your preferred hosting service.
 
-## Can I connect a custom domain to my Lovable project?
+## Features
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Secure user authentication
+- Admin panel for user management
+- Election creation and management
+- Real-time results
+- Fingerprint verification

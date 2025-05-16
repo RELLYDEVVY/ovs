@@ -149,6 +149,10 @@ const AdminPanel = () => {
   const [currentElection, setCurrentElection] = useState<any>(null);
   const [electionToDelete, setElectionToDelete] = useState<string | null>(null);
 
+  // Pagination state for users
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(5); // Max 5 users per page
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -427,6 +431,15 @@ const AdminPanel = () => {
     setIsDeleteDialogOpen(true);
   };
 
+  // Calculate current users to display based on pagination
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const totalUserPages = Math.ceil(users.length / usersPerPage);
+
+  // Change page handler for users
+  const paginateUsers = (pageNumber: number) => setCurrentPage(pageNumber);
+
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
       <h1 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-400">Admin Panel</h1>
@@ -553,21 +566,21 @@ const AdminPanel = () => {
 
           <div className="rounded-md border overflow-hidden shadow-md">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="min-w-full bg-background">
                 <thead>
-                  <tr className="bg-muted/50">
-                    <th className="px-4 py-3 text-left font-medium">Name</th>
-                    <th className="px-4 py-3 text-left font-medium">Email</th>
-                    <th className="px-4 py-3 text-left font-medium">Admin Status</th>
-                    <th className="px-4 py-3 text-left font-medium">Fingerprint Status</th>
-                    <th className="px-4 py-3 text-left font-medium">Actions</th>
+                  <tr className="border-b">
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Username</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Email</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Role</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Fingerprint</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <UserTableRows
                     usersLoading={usersLoading}
                     usersError={usersError}
-                    users={users}
+                    users={currentUsers} // Pass paginated users
                     toggleAdminStatus={toggleAdminStatus}
                     toggleFingerprintStatus={toggleFingerprintStatus}
                     handleDeleteUser={handleDeleteUser}
@@ -576,6 +589,35 @@ const AdminPanel = () => {
               </table>
             </div>
           </div>
+          {/* User Pagination Controls */}
+          {users.length > usersPerPage && (
+            <div className="mt-4 flex justify-center items-center space-x-2">
+              <Button
+                onClick={() => paginateUsers(currentPage - 1)}
+                disabled={currentPage === 1}
+                variant="outline"
+              >
+                Previous
+              </Button>
+              {Array.from({ length: totalUserPages }, (_, i) => i + 1).map(number => (
+                <Button
+                  key={number}
+                  onClick={() => paginateUsers(number)}
+                  variant={currentPage === number ? "default" : "outline"}
+                  size="sm"
+                >
+                  {number}
+                </Button>
+              ))}
+              <Button
+                onClick={() => paginateUsers(currentPage + 1)}
+                disabled={currentPage === totalUserPages || totalUserPages === 0}
+                variant="outline"
+              >
+                Next
+              </Button>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
       
